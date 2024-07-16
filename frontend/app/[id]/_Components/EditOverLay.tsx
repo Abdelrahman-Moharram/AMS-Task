@@ -10,7 +10,7 @@ const EditOverLay = ({edit, handleOverLay, overlay}:{edit:string, handleOverLay:
         handleToggler={handleOverLay}
         toggleDetails={overlay}
       >
-        <TransferBalance edit={edit} />
+        <TransferBalance edit={edit} handleOverLay={handleOverLay} />
       </OverLay>
     </div>
   )
