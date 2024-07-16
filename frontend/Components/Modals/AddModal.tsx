@@ -1,6 +1,5 @@
 import React from 'react'
 import BaseModal from './BaseModal'
-import Button from '../Common/Button';
 
 interface Props{
     open: boolean
@@ -20,11 +19,13 @@ const AddModal = ({open, handleClose, children, addAction, isLoading}:Props) => 
             {children}
 
             <div className="flex justify-end">
-                <Button
+                <button
+                    className='bg-purple-600 px-5 py-2 hover:bg-purple-700 rounded-md text-white'
                     title='Create'
-                    isLoading={isLoading}
                     onClick={addAction}
-                /> 
+                >
+                    Save
+                </button> 
             </div>
         </BaseModal>
     </div>

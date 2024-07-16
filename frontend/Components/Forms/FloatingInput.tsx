@@ -5,7 +5,7 @@ interface props {
 	labelId: string;
 	type: string;
 	onChange: (e:ChangeEvent<HTMLInputElement>) => void;
-	value: string | number;
+	value: string | number | undefined;
 	label: string
 	required?: boolean;
     children?: React.ReactNode | undefined
