@@ -5,7 +5,7 @@ import ImageSkeleton from './ImageSkeleton';
 interface item{
     href: string;
     title: string;
-    icon?: string | undefined
+    icon?: React.ReactNode
 }
 const Breadcrumb = ({items}:{items:item[]|undefined}) => {
   return (
@@ -32,7 +32,7 @@ const Breadcrumb = ({items}:{items:item[]|undefined}) => {
                         </svg>
                         :null
                     }
-                    <Link href={item.href} className="font-semibold text-secondry hover:text-black flex gap-2 items-center transition "> {item.icon} {item.title} </Link>
+                    <Link href={item.href} className="font-semibold text-secondry hover:text-black flex items-center text-lg transition "> {item.icon}{item.title} </Link>
                 </li>
             ))
         : 
