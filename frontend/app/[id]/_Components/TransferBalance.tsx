@@ -1,15 +1,18 @@
 'use client'
 import { FloatingInput } from '@/Components/Forms'
 import SearchInput from '@/Components/Forms/SearchInput'
-import { useGetAccountDetailsQuery } from '@/redux/api/dataApiSlice'
+import { useGetAccountDetailsQuery, useTransferMutation } from '@/redux/api/dataApiSlice'
 import React, { ChangeEvent, useState } from 'react'
 import { IoMdArrowDropright } from 'react-icons/io'
+import { toast } from 'react-toastify'
 
 interface Props{
-    edit: string
+    edit: string;
+    handleOverLay:()=>void
 }
-const TransferBalance = ({edit}:Props) => {
+const TransferBalance = ({edit, handleOverLay}:Props) => {
     const {data: details} = useGetAccountDetailsQuery({id:edit})
+    const [transfer] = useTransferMutation()
     const [amount, setAmount] = useState<number>()
     const [account, setAccount] = useState<string>()
     const [amountErrors, setAmountErrors] = useState<string[]>([])
@@ -38,7 +41,18 @@ const TransferBalance = ({edit}:Props) => {
             setAmountErrors(['invalid amount value please enter a valid number'])
             return
         }
-
+        if (edit && account && amount)
+            transfer({from:edit, to:account, amount:amount})
+            .unwrap()
+            .then(res=>{
+                toast.success(res?.message)
+                handleOverLay()
+            }).catch(err=>{
+                toast.error(err?.data?.detail)
+            })
+        else{
+            toast.error('invalid entered data enter a valid [edit && account && amount]')
+        }
     }
     return (
         <div className=''>
@@ -69,13 +83,20 @@ const TransferBalance = ({edit}:Props) => {
                     <SearchInput 
                         label='account'
                         labelId='account'
-                        value={account}
-                        onChange={changeAccount}
                         type='text'
                         changeWithValue={changeWithValue}
+                        exclude={[edit]}
                     />
                 </div>
             </div>
+            <button 
+                className='inline-block rounded border border-purple-600 bg-purple-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500 mx-24 mt-12 float-end'
+                onClick={submitValue}
+            >
+                Transfer
+            </button>
+
+
         </div>
     )
 }

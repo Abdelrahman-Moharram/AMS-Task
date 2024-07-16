@@ -9,7 +9,6 @@ import { BiHome } from 'react-icons/bi'
 const page = () => {
     const {id}:{id:string} = useParams()
     const {data} = useGetAccountDetailsQuery({id})
-    console.log(data);
     
   return (
     <div className='lg:w-[80%] min-h-screen w-full mx-auto bg-white rounded-md my-3 overflow-hidden transition-all p-12'>

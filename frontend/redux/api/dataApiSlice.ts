@@ -11,6 +11,7 @@ const DataApiSlice = apiSlice.injectEndpoints({
                 method:'GET',
                 params:{size, page}
             }),
+            providesTags:['accounts_list']
         }),
 
         getAccountDetails:builder.query({
@@ -18,6 +19,7 @@ const DataApiSlice = apiSlice.injectEndpoints({
                 url:`${id}/`,
                 method:'GET',
             }),
+            providesTags:['accounts_list']
         }),
 
         addData:builder.mutation({
@@ -28,13 +30,21 @@ const DataApiSlice = apiSlice.injectEndpoints({
             }),
         }),
         searchAccountByName:builder.mutation({
-            query:({query}:{query:string})=>({
+            query:({query, exclude}:{query:string, exclude:string[] | undefined})=>({
                 url:"search/",
-                method:'GET',
-                params:{query}
+                method:'POST',
+                body:{exclude, query}
             }),
         }),
         
+        transfer:builder.mutation({
+            query:({from, to, amount}:{from: string, to: string, amount:number})=>({
+                url:"transfer/",
+                method:'POST',
+                body:{from, to, amount}
+            }),
+            invalidatesTags:['accounts_list']
+        }),
     })
          
 }) 
@@ -43,5 +53,6 @@ export const {
     useGetDataListQuery,
     useAddDataMutation,
     useGetAccountDetailsQuery,
-    useSearchAccountByNameMutation
+    useSearchAccountByNameMutation,
+    useTransferMutation
 } = DataApiSlice

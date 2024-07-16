@@ -4,7 +4,7 @@ from rest_framework import response, status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
 from .helpers import to_int, read_data
-
+import json
 
 @api_view(['GET'])
 @permission_classes((AllowAny,))
@@ -55,16 +55,21 @@ def details(request, id):
         status=status.HTTP_200_OK
     )
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes((AllowAny,))
 def search(request):
-    query = request.GET.get('query')
-    if not query:
+    body = json.loads(request.body)
+    
+    if 'query' not in body:
         return response.Response(
             data={'detail':'invalid search value'},
             status=status.HTTP_400_BAD_REQUEST
         )
-    accs = account.objects.filter(name__contains=query)
+    if 'exclude' not in body:
+        accs = account.objects.filter(name__contains=body['query'])
+    else:
+        accs = account.objects.filter(name__contains=body['query']).exclude(id__in=body['exclude'])
+        print(body['exclude'])
     if not accs.count():
         return response.Response(data={'detail':'No Valid Accounts with this data'})
     accs_serial = AccountsSerializer(data=accs, many=True)
@@ -76,3 +81,43 @@ def search(request):
         data={'accounts': accs_serial.data},
         status=status.HTTP_200_OK
     )
+
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def transfer(request):
+    body = json.loads(request.body)
+    if 'from' not in body:
+        return response.Response(data={'detail': 'invalid data you should select account to send money from'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if 'to' not in body:
+        return response.Response(data={'detail': 'invalid data you should select account to send money to'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if body['from'] == body['to']:
+        return response.Response(data={'detail': "invalid Transfer operation you can't transfer money to your self"}, status=status.HTTP_400_BAD_REQUEST)
+    if 'amount' not in body:
+        return response.Response(data={'detail': 'invalid amount data you should enter a valid amount'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    from_acc  = account.objects.filter(id=body['from']).first()
+    to_acc  = account.objects.filter(id=body['to']).first()
+
+    if not from_acc:
+        return response.Response(data={'detail': 'sender account is not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if not to_acc:
+        return response.Response(data={'detail': 'receiver account is not found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    if body['amount'] > from_acc.balance:
+        return response.Response(data={'detail': f'amount is not enough your allowed balance is {from_acc.balance}'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if body['amount'] <= 0:
+        return response.Response(data={'detail': f'invalid entered amount please enter a valid positive value between (0 and {from_acc.balance}) '}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Transfering 
+    from_acc.balance -= body['amount']
+    to_acc.balance += body['amount']
+    from_acc.save()
+    to_acc.save()
+    return response.Response(
+            data={'message':f'money transfared from {from_acc.name} to {to_acc.name} successfully!'}, 
+            status=status.HTTP_200_OK
+        )
