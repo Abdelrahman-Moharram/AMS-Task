@@ -1,4 +1,5 @@
 'use client'
+import { Spinner } from '@/Components/Common'
 import { FloatingInput } from '@/Components/Forms'
 import SearchInput from '@/Components/Forms/SearchInput'
 import { useGetAccountDetailsQuery, useTransferMutation } from '@/redux/api/dataApiSlice'
@@ -12,13 +13,11 @@ interface Props{
 }
 const TransferBalance = ({edit, handleOverLay}:Props) => {
     const {data: details} = useGetAccountDetailsQuery({id:edit})
-    const [transfer] = useTransferMutation()
+    const [transfer, {isLoading}] = useTransferMutation()
     const [amount, setAmount] = useState<number>()
     const [account, setAccount] = useState<string>()
     const [amountErrors, setAmountErrors] = useState<string[]>([])
-    const changeAccount = (e:ChangeEvent<HTMLInputElement>) =>{
-        setAccount(e.target.value)
-    }
+
     const changeWithValue = (value:string) =>{
         setAccount(value)
     }
@@ -93,7 +92,12 @@ const TransferBalance = ({edit, handleOverLay}:Props) => {
                 className='inline-block rounded border border-purple-600 bg-purple-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-500 mx-24 mt-12 float-end'
                 onClick={submitValue}
             >
-                Transfer
+                {
+                    isLoading?
+                        <span className='flex items-center gap-2'><Spinner sm /> Transfer</span>
+                    :'Transfer'
+                }
+                
             </button>
 
 

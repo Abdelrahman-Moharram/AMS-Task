@@ -6,7 +6,7 @@ import React, { ChangeEvent, useState } from 'react'
 import { toast } from 'react-toastify'
 
 const AddNewFile = () => {
-    const  [addData] = useAddDataMutation()
+    const  [addData, {isLoading}] = useAddDataMutation()
     const [file, setFile] = useState<File | null>()
     const [showModal, setShowModal] = useState(false)
     
@@ -36,9 +36,11 @@ const AddNewFile = () => {
         .then(res=>{
             console.log(res);
             handleAddModal()
+            toast.success(res.message)
         })
         .catch(err=>{
             console.log(err);
+            toast.error(err?.data?.detail)
         })
       }
     }
@@ -53,7 +55,7 @@ const AddNewFile = () => {
 
         <AddModal
             addAction={addAction}
-            isLoading={false}
+            isLoading={isLoading}
             handleClose={handleAddModal}
             open={showModal}
         >

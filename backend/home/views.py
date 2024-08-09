@@ -32,10 +32,13 @@ def index(request):
 def add(request):
     if len(request.FILES):
         df = read_data(request.FILES['file'])
+        counter = 0
         for _, row in df.iterrows():
-            if not account.objects.exists(id=row[0]):
+            if not account.objects.filter(id=row[0]).count():
                 account.objects.create(id=row[0], name=row[1], balance=row[2])
-    return response.Response({'message':'Data Uploaded Successfully'}, status=status.HTTP_200_OK)
+                counter += 1
+        return response.Response({'message':f'Data Uploaded Successfully {counter} row added'}, status=status.HTTP_200_OK)
+    return response.Response({'detail':"Data isn't invalid"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

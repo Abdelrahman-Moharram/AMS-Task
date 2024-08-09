@@ -28,6 +28,7 @@ const DataApiSlice = apiSlice.injectEndpoints({
                 method:'POST',
                 body:form
             }),
+            invalidatesTags:['accounts_list']
         }),
         searchAccountByName:builder.mutation({
             query:({query, exclude}:{query:string, exclude:string[] | undefined})=>({

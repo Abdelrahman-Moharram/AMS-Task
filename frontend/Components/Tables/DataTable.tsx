@@ -5,8 +5,8 @@ import React, { useCallback, useState } from 'react'
 import Paginition from './Paginition';
 import Link from 'next/link';
 import { BsEye } from 'react-icons/bs';
-import { BiEdit } from 'react-icons/bi';
 import EditOverLay from '@/app/[id]/_Components/EditOverLay';
+import { FaMoneyBillTransfer } from 'react-icons/fa6';
 interface accountType{
   id: string;
   name: string;
@@ -107,16 +107,15 @@ const DataTable = () => {
                             className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm text-blue-500 shadow-sm focus:relative"
                           >
                             <BsEye />
-
-                            View
+                            Details
                         </Link>
                           
                         <button
                           onClick={()=>handleEditItem(row?.id)}
-                          className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm text-blue-500 shadow-sm focus:relative"
+                          className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm text-green-500 shadow-sm focus:relative"
                         >
-                          <BiEdit />
-                          Edit
+                          <FaMoneyBillTransfer />
+                          Transfer
                         </button>                        
                       </div>
                     </td>
